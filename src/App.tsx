@@ -1,13 +1,17 @@
 import './App.css';
 import styled from 'styled-components';
+import Accordion from './Accordion';
 
 function App() {
-    return <Wrapper>hello world</Wrapper>;
+    return (
+        <Wrapper>
+            <Accordion />
+        </Wrapper>
+    );
 }
 
 const Wrapper = styled.div`
-    border: 2px solid lime;
-    min-width: 30rem;
+    max-width: 40rem;
 `;
 
 export default App;
