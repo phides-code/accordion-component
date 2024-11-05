@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Faq } from './faqs';
 import { faqColors } from './colors';
-import './styles.css'; // CSS file for animations
+import { motion } from 'framer-motion';
 
 interface FaqCardProps {
     isActive: boolean;
@@ -21,38 +21,52 @@ const FaqCard = ({ isActive, setSelectedCard, faq, index }: FaqCardProps) => {
 
     const { darkColor, lightColor } = faqColors[index];
 
+    const slideIn = {
+        hidden: { y: '-100%' },
+        visible: { y: 0 },
+        exit: { y: '100%' },
+    };
+
     return (
-        <Wrapper $darkColor={darkColor} $lightColor={lightColor}>
+        <>
             {isActive ? (
                 <>
-                    <TextArea>
+                    <Wrapper $darkColor={darkColor} $lightColor={lightColor}>
                         <QuestionWrapper>
                             <ExpandedQuestionText>
                                 {faq.question}
                             </ExpandedQuestionText>
                         </QuestionWrapper>
 
+                        <ButtonArea>
+                            <CollapseButton
+                                $lightColor={lightColor}
+                                onClick={() => handleCollapse()}
+                            >
+                                +
+                            </CollapseButton>
+                        </ButtonArea>
+                    </Wrapper>
+                    <AnswerMotion
+                        $darkColor={darkColor}
+                        $lightColor={lightColor}
+                        key='slide-div'
+                        initial='hidden'
+                        animate='visible'
+                        exit='exit'
+                        variants={slideIn}
+                        transition={{ type: 'tween', duration: 0.25 }}
+                    >
                         <AnswerWrapper>{faq.answer}</AnswerWrapper>
-                    </TextArea>
-
-                    <ButtonArea>
-                        <CollapseButton
-                            $lightColor={lightColor}
-                            onClick={() => handleCollapse()}
-                        >
-                            +
-                        </CollapseButton>
-                    </ButtonArea>
+                    </AnswerMotion>
                 </>
             ) : (
-                <>
-                    <TextArea>
-                        <QuestionWrapper>
-                            <CollapsedQuestionText>
-                                {faq.question}
-                            </CollapsedQuestionText>
-                        </QuestionWrapper>
-                    </TextArea>
+                <Wrapper $darkColor={darkColor} $lightColor={lightColor}>
+                    <QuestionWrapper>
+                        <CollapsedQuestionText>
+                            {faq.question}
+                        </CollapsedQuestionText>
+                    </QuestionWrapper>
 
                     <ButtonArea>
                         <ExpandButton
@@ -62,9 +76,9 @@ const FaqCard = ({ isActive, setSelectedCard, faq, index }: FaqCardProps) => {
                             +
                         </ExpandButton>
                     </ButtonArea>
-                </>
+                </Wrapper>
             )}
-        </Wrapper>
+        </>
     );
 };
 
@@ -78,10 +92,12 @@ const Wrapper = styled.div<StyledComponentProps>`
     justify-content: space-between;
     background: ${(props) => props.$lightColor};
     border-left: ${(props) => `3px solid ${props.$darkColor}`};
-    margin: 1rem 0;
+    margin-top: 1rem;
+    position: relative;
+    z-index: 999;
 `;
 
-const TextArea = styled.div`
+const TextWrapper = styled.div`
     padding: 1rem 0.5rem;
     text-align: left;
 `;
@@ -91,15 +107,19 @@ const ButtonArea = styled.div`
     display: flex;
     align-items: flex-start;
 `;
-const QuestionWrapper = styled.div``;
+const QuestionWrapper = styled(TextWrapper)``;
 const CollapsedQuestionText = styled.div``;
+const AnswerWrapper = styled(TextWrapper)`
+    padding-top: 0;
+`;
 
 const ExpandedQuestionText = styled.div`
     font-weight: bold;
 `;
 
-const AnswerWrapper = styled.div`
-    margin-top: 1rem;
+const AnswerMotion = styled(motion.div)<StyledComponentProps>`
+    background: ${(props) => props.$lightColor};
+    border-left: ${(props) => `3px solid ${props.$darkColor}`};
 `;
 const StyledButton = styled.button<StyledComponentProps>`
     border: none;
