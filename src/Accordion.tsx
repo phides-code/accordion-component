@@ -17,7 +17,6 @@ const Accordion = () => {
 };
 
 const Wrapper = styled.div`
-    border: 1px solid red;
     padding: 2.5rem 4rem;
 `;
 
